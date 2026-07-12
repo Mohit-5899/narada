@@ -74,5 +74,5 @@ CONVEX_URL=https://agile-marlin-826.convex.site CONVEX_AGENT_SECRET=<secret> \
 
 ## Status (update as we go)
 
-**Verified ✅:** npm install · vite build · all smoke tests · schema live on Convex · wire auth 401 · authed `get_business` round-trip · guest auth JWT keys set · Resend key set.
-**Pending ⏳:** Telegram bot @NaradaMarketingbot created — token goes in narada/.env.local · gateway wiring per `narada/README.md` (env: `TELEGRAM_ALLOWED_USERS=*`, `NARADA_TOOLS_DIR` absolute) · onboarding→crew trigger (how Hermes learns a new business signed up) · Dodo checkout page (stub) · LinkedIn publisher (honest stub, P4) · Langfuse observability wiring · magic-link end-to-end test.
+**Verified ✅:** full product loop end-to-end — onboarding → cron crew analysis → brief (live flip) → Telegram binding → per-message identity w/ context_md → drafts → approval gate → REAL LinkedIn publish → dashboard log → Langfuse traces (per-step cost). Evals 6/6 static. UI live at narada-2i1.pages.dev (Cloudflare). Dodo checkout live (test mode, pdt_0Nj13OjtcRdHTFRSEX287). ElevenLabs key in gateway env (Hermes built-in TTS). SLO fixes: SOUL speed rules + space-free tools symlink (~/.hermes/narada-tools) + haiku ganas.
+**Pending ⏳:** eval --live baseline results · langfuse_ops diff/alert harvest + alert cron · voice briefing live test (TTS) · demo rehearsal · post-event: rotate ALL chat-pasted keys (Resend, bot token, Anthropic, Gemini, Zernio, LinkUp, Langfuse, ElevenLabs, Dodo), restrict bot, VPS migration.
