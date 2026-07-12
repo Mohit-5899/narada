@@ -11,7 +11,8 @@ live in standalone Python tools, and per-business context comes from Convex
 ```
 narada/
 ├── skills/            narada-manager + 4 specialist ganas (SKILL.md each)
-├── tools/             convex_client, publish_telegram_channel, send_email,
+├── tools/             convex_client, zernio (social publishing, primary),
+│                      publish_telegram_channel, send_email,
 │                      deploy_landing_page, publish_linkedin (stub)
 ├── config/            hermes-config-snippet.yaml — blocks for ~/.hermes/config.yaml
 ├── evals/             eval_set.jsonl (20 briefs) + run_evals.py
@@ -121,7 +122,8 @@ as MANUAL and excluded from the pass rate — an LLM judge is the upgrade path.
 
 | Surface | Tool | Status |
 |---|---|---|
-| Telegram channel | `publish_telegram_channel.py` | primary, real |
+| Social (X, LinkedIn, IG… via Zernio) | `zernio.py` | primary, real (needs `ZERNIO_API_KEY`) |
+| Telegram channel | `publish_telegram_channel.py` | secondary, real |
 | Email (Resend) | `send_email.py` | real |
 | Landing page | `deploy_landing_page.py` | writes HTML always; wrangler deploy only when `NARADA_WRANGLER_DEPLOY=true` |
 | LinkedIn | `publish_linkedin.py` | STUB — untested, fails loudly (P4) |
