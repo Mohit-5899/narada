@@ -1,0 +1,51 @@
+# =============================================================================
+# Narada — blocks to MERGE into ~/.hermes/config.yaml
+# =============================================================================
+# Do not replace your config wholesale; copy each top-level key below into the
+# matching section of ~/.hermes/config.yaml. Replace /ABSOLUTE/PATH/TO/REPO
+# with the hermes-agent checkout containing narada/.
+
+# --- Model (buildathon: provider id is `openai-api`, NOT `openai`) ----------
+model:
+  provider: "openai-api"
+  default: "gpt-5.6-sol"
+
+# --- Skills: load Narada's skills without copying into ~/.hermes/skills -----
+# External dirs are read-only; local skills win on name collision
+# (cli-config.yaml.example "Skills Configuration").
+skills:
+  external_dirs:
+    - /ABSOLUTE/PATH/TO/REPO/narada/skills
+
+# --- Delegation: manager spawns specialists; depth 2 lets an orchestrator
+# --- child spawn its own workers (requires role="orchestrator" on the
+# --- intermediate agent — see tools/delegate_tool.py note) -------------------
+delegation:
+  max_spawn_depth: 2          # range 1-3; default 1 = flat
+  orchestrator_enabled: true  # default true; kept explicit for the demo
+  # Optional cost lever (rubric: cheap model for specialists):
+  # model: "gpt-5.6-sol-mini"
+  # provider: "openai-api"
+
+# =============================================================================
+# Gateway / Telegram — env notes (goes in ~/.hermes/.env, not config.yaml)
+# =============================================================================
+# VERIFIED against gateway/authz_mixin.py::_is_user_authorized and
+# plugins/platforms/telegram/adapter.py (July 2026 code):
+#
+#   TELEGRAM_ALLOWED_USERS unset does NOT mean open access. Hermes FAILS
+#   CLOSED: with no allowlist configured, unknown DMs are routed to the
+#   pairing flow (unauthorized_dm_behavior: "pair" default) and
+#   _is_user_authorized returns deny unless GATEWAY_ALLOW_ALL_USERS is true
+#   (fail-open was removed in #24457 / #34515; see SECURITY.md §2.6).
+#
+# For Narada's open bot (D10) you must OPT IN explicitly — either of:
+#
+#   TELEGRAM_BOT_TOKEN=123456:ABC...
+#   TELEGRAM_ALLOWED_USERS=*            # wildcard allowlist, or
+#   # TELEGRAM_ALLOW_ALL_USERS=true     # per-platform allow-all flag
+#   # GATEWAY_ALLOW_ALL_USERS=true      # global allow-all (broader; avoid)
+#
+# All three make every Telegram sender authorized; per-business identity is
+# then enforced in the narada-manager skill via Convex lookup, not by the
+# gateway. Keep other platforms disabled while the bot is open.
