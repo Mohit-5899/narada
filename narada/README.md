@@ -15,7 +15,9 @@ narada/
 │                      publish_telegram_channel, send_email,
 │                      deploy_landing_page, publish_linkedin (stub)
 ├── config/            hermes-config-snippet.yaml — blocks for ~/.hermes/config.yaml
-├── evals/             eval_set.jsonl (20 briefs) + run_evals.py
+├── evals/             eval_set.jsonl (20 briefs) + run_evals.py,
+│                      check_skills.py (static skill gate),
+│                      agent_evals.jsonl + run_agent_evals.py (per-agent live evals)
 └── .env.example       every env var Narada reads
 ```
 
@@ -103,6 +105,34 @@ narada/
 - **Logging**: every completed task → `convex_client.py log-task`.
 - **Closed-loop evals**: failures/escalations → `append-eval-case`, and the
   curated set lives in `evals/eval_set.jsonl`.
+
+## Pre-deploy check
+
+Before any deploy, one command answers "is each agent's basic workflow intact?":
+
+```bash
+python3 narada/evals/check_skills.py     # layer 1 — free, offline, seconds
+```
+
+Static contract gate over all 6 SKILL.md files (frontmatter; manager QA
+gate/AARRR/bounce/identity rules; copywriter 10-levers/banned-vocab/280-char
+X limit; researcher 300-word cap/no raw dumps; creative brand-colors-first/
+hard-limits table/Veo ~8s/zernio handoff; publisher accounts-first/approval/
+verbatim echo; analyst LEARNINGS/read-only) plus existence of every tool file
+a skill references. Exit 1 with the failed assertion named per skill.
+
+Then, optionally, live per-agent workflow evals (one canned task per agent,
+regex-checked output — costs tokens, ~$0.10–0.50/case):
+
+```bash
+python3 narada/evals/run_agent_evals.py          # dry: validate cases + print plan (free)
+python3 narada/evals/run_agent_evals.py --live   # execute via `uv run hermes-agent`
+```
+
+`--live` needs a model API key and the narada skills wired into
+`~/.hermes/config.yaml` (step 3 above); it never touches a live surface
+(reasoning toolset only). Each case also documents a manual Telegram
+alternative in its `manual` field.
 
 ## Evals
 
