@@ -215,12 +215,20 @@ def cmd_diff(id_a: str, id_b: str) -> int:
 
 
 def cmd_alert(max_cost: float, max_latency: float, window: int) -> int:
+    # ONE request: the list payload already carries totalCost + latency.
+    # Per-trace detail fetches hit Langfuse's 15/min rate limit (429), so
+    # ERROR-level observation scanning is dropped — cost/latency are the
+    # D17 SLO signals and need only the list.
     listing = api_get("/api/public/traces", {"limit": window})
     breaches = []
     for t in listing.get("data") or []:
-        # detail fetch: the list payload has no observation levels.
-        detail = api_get(f"/api/public/traces/{urllib.parse.quote(t.get('id', ''))}")
-        breaches.extend(find_breaches(detail, max_cost, max_latency))
+        tid = (t.get("id") or "")[:8]
+        cost = t.get("totalCost") or 0
+        latency = t.get("latency") or 0
+        if cost > max_cost:
+            breaches.append("ALERT cost trace=%s $%.4f > $%.2f" % (tid, cost, max_cost))
+        if latency > max_latency:
+            breaches.append("ALERT latency trace=%s %.1fs > %.0fs" % (tid, latency, max_latency))
     for line in breaches:
         print(line)
     return 1 if breaches else 0  # silent success when clean
