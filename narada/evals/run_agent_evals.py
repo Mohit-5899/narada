@@ -273,6 +273,10 @@ def main(argv=None) -> int:
         rows.append(run_live_case(case, out_dir))
     ok = print_results(rows)
     print(f"outputs: {out_dir}")
+    try:
+        push_scores_to_langfuse(rows, git_label())  # silent skip if keys unset
+    except Exception as e:
+        print(f"(langfuse push failed, results still valid locally: {e})")
     return 0 if ok else 1
 
 
@@ -306,3 +310,47 @@ def smoke() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# ---------------------------------------------------------------- langfuse
+def push_scores_to_langfuse(rows: list, label: str) -> None:
+    """Push eval results into Langfuse as one trace + one score per case,
+    so eval history lives next to the runtime traces (trend over versions).
+    Uses the public ingestion API with basic auth; no SDK dependency."""
+    import base64
+    import datetime
+    import urllib.request
+    import uuid
+    pk = os.environ.get("LANGFUSE_PUBLIC_KEY", "")
+    sk = os.environ.get("LANGFUSE_SECRET_KEY", "")
+    host = os.environ.get("LANGFUSE_BASE_URL", "https://jp.cloud.langfuse.com").rstrip("/")
+    if not (pk and sk):
+        print("(langfuse push skipped: LANGFUSE_PUBLIC_KEY/SECRET_KEY not set)")
+        return
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    trace_id = str(uuid.uuid4())
+    batch = [{
+        "id": str(uuid.uuid4()), "type": "trace-create", "timestamp": now,
+        "body": {"id": trace_id, "name": f"narada-eval-run {label}",
+                 "tags": ["evals", label], "timestamp": now},
+    }]
+    for r in rows:
+        results = r.get("results") or {}
+        passed = sum(1 for v in results.values() if v)
+        total = len(results) or 1
+        batch.append({
+            "id": str(uuid.uuid4()), "type": "score-create", "timestamp": now,
+            "body": {"id": str(uuid.uuid4()), "traceId": trace_id,
+                     "name": f"eval:{r['id']}", "value": passed / total,
+                     "comment": f"{passed}/{total} checks · agent={r['agent']}"
+                                + (f" · ERROR: {r['error']}" if r.get("error") else "")},
+        })
+    req = urllib.request.Request(
+        f"{host}/api/public/ingestion",
+        data=json.dumps({"batch": batch}).encode("utf-8"),
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Basic " + base64.b64encode(f"{pk}:{sk}".encode()).decode()},
+        method="POST")
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        resp.read()
+    print(f"langfuse: pushed {len(rows)} eval scores (trace 'narada-eval-run {label}')")
