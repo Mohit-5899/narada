@@ -17,6 +17,9 @@ export default function Header() {
         <a href="#/guide" className={isActive("/guide") ? "active" : undefined}>
           Guide
         </a>
+        <a href="#/telegram" className={isActive("/telegram") ? "active" : undefined}>
+          Telegram
+        </a>
         <a href="#/dashboard" className={isActive("/dashboard") ? "active" : undefined}>
           Dashboard
         </a>
