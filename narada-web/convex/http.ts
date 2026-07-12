@@ -87,6 +87,7 @@ http.route({
             competitors: optStrArr(body, "competitors"),
             colors: optStrArr(body, "colors"),
             campaign_ideas: optStrArr(body, "campaign_ideas"),
+            context_md: optStr(body, "context_md"),
           });
           return ok({ brief_id: id });
         }

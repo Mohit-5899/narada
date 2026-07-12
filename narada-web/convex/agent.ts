@@ -44,6 +44,7 @@ export const writeBrief = internalMutation({
     competitors: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
     campaign_ideas: v.optional(v.array(v.string())),
+    context_md: v.optional(v.string()),
   },
   handler: async (ctx, { link_token, business_id, ...fields }) => {
     const business = await businessByIdOrToken(ctx, business_id, link_token);

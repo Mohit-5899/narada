@@ -16,6 +16,7 @@ export default defineSchema({
     website: v.string(),
     logo_url: v.optional(v.string()),
     images: v.array(v.string()),
+    pdfs: v.optional(v.array(v.string())),
     one_liner: v.optional(v.string()),
     owner: v.id("users"),
     link_token: v.string(),
@@ -34,6 +35,9 @@ export default defineSchema({
     competitors: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
     campaign_ideas: v.optional(v.array(v.string())),
+    // Agent-readable brand context: ONE markdown blob the onboarding crew
+    // writes (from website + images + PDFs) and the manager loads per turn.
+    context_md: v.optional(v.string()),
     approved_at: v.optional(v.number()),
   }).index("by_business", ["business_id"]),
 
