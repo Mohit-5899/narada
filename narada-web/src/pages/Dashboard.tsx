@@ -119,10 +119,23 @@ export default function Dashboard() {
                       <td>{timeOf(task.created_at)}</td>
                       <td>{timeOf(task.completed_at)}</td>
                       <td>
-                        {task.trace_url ? (
+                        {task.trace_url?.startsWith("http") ? (
                           <a href={task.trace_url} target="_blank" rel="noreferrer">
                             view
                           </a>
+                        ) : task.trace_url ? (
+                          // Bare record id (agent output_ref), not a URL —
+                          // show shortened, copy on click.
+                          <span
+                            className="muted"
+                            style={{ cursor: "copy" }}
+                            title={`ref: ${task.trace_url} (click to copy)`}
+                            onClick={() =>
+                              void navigator.clipboard.writeText(task.trace_url!)
+                            }
+                          >
+                            ref:{task.trace_url.slice(0, 6)}…
+                          </span>
                         ) : (
                           "—"
                         )}
