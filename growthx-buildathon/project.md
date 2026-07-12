@@ -1,0 +1,109 @@
+# PROJECT.md — NARADA (Marketing OS) · Living Build Doc
+
+**Name:** Narada — the divine messenger, Hermes' Indian counterpart. Built on Hermes; the demo symmetry is the pitch.
+**Tagline:** *"Every business has a story. Narada makes the three worlds hear it."*
+**Naming system:** manager agent = Narada · specialists = his ganas · daily voice briefing = "Narada's news"
+
+> The single source of truth for how we move. Update after every decision. Everything else in this folder is reference; this is the pointer.
+
+**Status:** Ideation → flows locked for onboarding + surface split. Campaign loop next.
+**Track:** AI as Agency (164 base + overflow) · Hermes as base harness (+ coding partner receipts)
+
+---
+
+## 1. Locked decisions ✅
+
+| # | Decision | Why | Ref |
+|---|----------|-----|-----|
+| D1 | Track = AI as Agency | Hermes ships the rubric as features; strongest proof by 5 PM | [05](05-track-ai-as-agency.md) |
+| D2 | Idea = Marketing OS (AI marketing agency for businesses) | Superset of 3 library ideas; full-function replacement | [08](08-idea-marketing-os.md) |
+| D3 | Surface split: **Web UI = onboarding + payments + read-only dashboard · Telegram = operations** | UI satisfies live-URL rule + signup capture + proof minute; Telegram = free command center via Hermes gateway | this file §3 |
+| D4 | Keep a read-only campaign dashboard page in UI | Proof minute + judges who skip Telegram still see it live | — |
+| D5 | Convex = **cloud (convex.dev free tier)**, not self-hosted repo | Zero setup; power-up evidence = Convex dashboard; self-host burns an hour for 0 pts | get-convex/convex-backend = self-host fallback only |
+| D6 | Observability = **L5 target** via Hermes' built-in Langfuse plugin (`plugins/observability/langfuse/`) + custom diff page + cron alert to Telegram | Agents product → trace IS the demo; delegation events already carry subagent_id/parent_id/depth | chat log |
+| D7 | Evals = **L5 target**, closed-loop | SKILL.md roles in git (versioning free); failed runs auto-append to eval set; v1→v2 pass-rate chart | chat log |
+| D8 | Auth = email magic-link, no password | Signup = verifiable email + first-use event (brief approval) | — |
+| D9 | **No campaign workflow — general chat + Hermes main loop as orchestrator** | Fixed pipelines = L2 org structure; dynamic per-request planning = L4/L5. Mentor test: two different requests must produce different traces. We build only: (a) skills = manager brain + specialist role prompts (SKILL.md, git-versioned), (b) tools = publish_linkedin, send_email, post_telegram_channel, deploy_landing_page, convex_log. Two skill rules: approval gate before real publish; log every task to Convex | chat log |
+
+## 2. Open problems 🔴 (solve before/at hour 0)
+
+| # | Problem | Direction | Owner/when |
+|---|---------|-----------|-----------|
+| P1 | **Web↔Telegram identity link** | Deep link `t.me/<bot>?start=<token>`; token minted at onboarding, stored in Convex `businesses.link_token`; bot matches on /start → binds `telegram_user_id` to business | Design done, build hour 1 |
+| ~~P2~~ | ~~Multi-user Telegram gateway~~ | **RESOLVED → D10**: single profile, OPEN bot (`TELEGRAM_ALLOWED_USERS` unset = unrestricted per gateway/config.py pattern). Business identity per-message: telegram_user_id → Convex lookup → load brand brief. Multi-profile rejected (needs manual bot token + provisioning per signup — breaks live signups, 1.5–3h vs 30–60min). Verify open-bot behavior in 10-min spike at hour 0 | done (verify hr 0) |
+| ~~P3~~ | ~~Campaign loop flow~~ | **RESOLVED → D9**: no workflow; general chat + main loop + skills + tools | done |
+| P4 | Which real publish surfaces? X API flaky risk | Primary: LinkedIn + email (Resend) + Telegram channel; X if keys work | decide hour 1 |
+
+## 3. Architecture (current)
+
+```
+User → Web UI (Cloudflare Pages)                    ← signups, Dodo checkout
+         │  onboarding: name + URL (+logo/images)
+         ▼
+       Onboarding crew (Hermes delegate_task, parallel)
+         Site Analyst · Market Researcher (LinkUp) · Brand Analyst
+         │  → Brand Brief → user approves/edits (first-use event!)
+         ▼
+       Convex (cloud): businesses · brand_briefs · campaigns · tasks · eval_cases
+         + Hermes memory: brand rules layer (L5 memory #3)
+         ▼
+       Deep link t.me/<bot>?start=<token>  →  Telegram = command center
+         │  "launch a campaign for X"
+         ▼
+       Manager agent → spawns specialists (researcher/copywriter/publisher/analyst)
+         → real surfaces (LinkedIn, email, Telegram channel, landing pages)
+         → traces to Langfuse · alerts via cron → Telegram
+         ▼
+       Read-only dashboard page (Convex-powered) ← THE PROOF MINUTE SCREEN
+```
+
+## 4. Onboarding flow (locked)
+1. **Capture** (30s): business name + website URL required; logo/images/one-liner optional. Email magic-link.
+2. **Analyze** (60–90s, live progress shown): 3 parallel agents — site analyst, LinkUp researcher, brand analyst.
+3. **Brand Brief** (aha): offering/audience/tone/competitors/colors + 5 ready campaign ideas → user edits → ✅ approves (= first-use event).
+4. **Persist**: Convex rows + brand rules → Hermes memory.
+5. **Handoff**: Telegram deep link + "fire your first campaign" (pre-filled idea).
+
+Edge cases: no website → 3 chat questions fallback · unreachable site → partial brief, flagged · huge site → cap: home + about + pricing + 2 product pages · wrong analysis → edit step catches.
+
+## 5. Rubric targets (running tally)
+
+| Param | Weight | Target | Pts |
+|-------|--------|--------|-----|
+| Real output | 20x | L5 + overflow (+20/task during judging — keep 5–6 briefs queued) | 80+ |
+| Org structure | 5x | L5 (`max_spawn_depth: 2`, orchestrator; show mid-task role spawn) | 20 |
+| Observability | 7x | **L5** (Langfuse tree + diff page + fired alert + search) | 28 |
+| Evals | 5x | **L5** (closed-loop, git-tagged versions, pass-rate chart) | 20 |
+| Memory | 2x | L5 (session + client past + brand rules) | 8 |
+| Cost/latency | 1x | L4 (cheap model for specialists) | 3 |
+| Management UI | 1x | L4 (Telegram natural language; L5 volunteer test if time) | 3 |
+| **Base** | | | **~162** |
+| Power-ups | | LinkUp · ElevenLabs · Convex · Cloudflare · Dodo · Wispr | +150 |
+| Cross-track | | self-launch campaign → visitors 5x, signups 12.5x | +30–50 |
+
+## 6. Build order (8h — see [08](08-idea-marketing-os.md) for detail, this supersedes)
+
+| Hr | Do |
+|----|----|
+| 0–1 | Hermes setup ([09](09-setup.md) checklist) · **P2 multi-user spike** · Convex project · orchestrator config |
+| 1–3 | Onboarding: UI form → crew → Brand Brief → Convex → deep-link handoff (P1) · specialist skills (manager/researcher/copywriter/publisher/analyst) |
+| 3–4 | Langfuse plugin on, verify trace tree · memory layers wired |
+| 4–5 | Eval set (20 briefs) + closed-loop hook + v1 baseline · Dodo checkout · dashboard page |
+| 5–6 | Diff page + cron alert · publish surfaces hardened |
+| 6–7 | v2 eval run (chart the gain) · self-launch campaign (cross-track) · proof collection: 3+ logged runs, Wispr screenshot, read-only accesses |
+| 7–8 | Submit at growthx.club/hermes-buildathon/submit · demo prep ([11](11-ship-and-demo.md)) · rehearse ×2 |
+
+## 7. Pre-event checklist (TONIGHT)
+- [ ] Claim perks — OpenAI org ID especially ([02](02-prizes.md))
+- [ ] Hermes installed, Telegram answering ([09](09-setup.md) checklist)
+- [ ] Read `multi-profile-gateways.md` (P2)
+- [ ] Accounts ready: Convex, Cloudflare, Dodo, LinkUp, ElevenLabs, Wispr, Resend, Langfuse
+- [ ] Analytics pick: Datafast or Plausible, read-only share link tested
+- [ ] 5–6 real campaign briefs drafted (overflow ammo)
+
+## 8. Decision log (append-only)
+- 2026-07-12: D1–D8 locked during ideation with Claude. P1 design settled (deep-link token). P2 flagged for spike.
+- 2026-07-12: D9 locked — no campaign workflow. General chat + Hermes main loop as orchestrator; skills carry the marketing brain, tools carry the hands. P3 closed.
+- 2026-07-12: D10 locked — single profile + open Telegram bot; per-business context via Convex lookup by telegram_user_id. Multi-profile rejected for live signups. P2 closed (10-min verify at hour 0). Global MEMORY.md = agency-level rules only; brand rules per business in Convex.
+- 2026-07-12: D11 — business model split: event day sells HOSTED service (Dodo $9/mo, no guide needed — we run the gateway). Self-host deployment guide = post-event week-1 work, open-core play (guide + skills free, hosted paid). Event-day version: 30-min repo README at hour 7 (architecture + run steps).
+- 2026-07-12: D12 — name = NARADA. Tagline: "Every business has a story. Narada makes the three worlds hear it." TODO tonight: check handles (naradaos.com, getnarada.com, narada.marketing, @narada bot username on Telegram, X handle).

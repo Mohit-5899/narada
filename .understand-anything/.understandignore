@@ -1,0 +1,79 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore. Auto-activated for full-sweep on a 3000+ file repo.
+
+# --- Built-in defaults are already applied (node_modules, .git, dist, etc.) ---
+
+# --- Activated for this analysis (Hermes Agent full sweep) ---
+
+# Release notes (12 huge historical files — not architecture)
+RELEASE_v*.md
+README.zh-CN.md
+
+# Translations
+locales/
+
+# Large config examples (5MB+ of mostly comments/example values)
+.env.example
+cli-config.yaml.example
+
+# Planning docs (transient, not architecture)
+.plans/
+plans/
+hermes-already-has-routines.md
+
+# Benchmark fixtures and eval data
+environments/benchmarks/evals/
+
+# Build/packaging scripts (not core architecture)
+packaging/
+nix/
+flake.lock
+flake.nix
+
+# Test files (huge suite, ~400+ files)
+tests/
+
+# Examples and example datasets
+examples/
+datagen-config-examples/
+
+# Docs site (separate from inline docs)
+website/
+
+# Lock files and generated artifacts
+package-lock.json
+uv.lock
+.mailmap
+.gitattributes
+.gitmodules
+.dockerignore
+MANIFEST.in
+constraints-termux.txt
+
+# Asset directories
+assets/
+acp_registry/
+
+# Optional/external skills (analyzed separately if needed)
+optional-skills/
+tinker-atropos/
+hermes_agent.egg-info/
+
+# IDE/editor
+.envrc
+.understand-anything/
+
+# Misc patterns from .gitignore
+*.pyc*
+__pycache__/
+.venv/
+venv/
+.pytest_cache/
+.direnv/
+.nix-stamps/
+data/
+logs/
+tmp/
+*.ppk
+*.pem
+hermes-*/
