@@ -104,6 +104,43 @@ def cmd_accounts() -> int:
     return 0
 
 
+_CONTENT_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                  ".gif": "image/gif", ".mp4": "video/mp4", ".webp": "image/webp"}
+
+
+def cmd_upload(ns) -> int:
+    """Presign + upload a local media file; prints the public URL for --image-url."""
+    if not os.path.isfile(ns.file):
+        print(f"error: file not found: {ns.file}", file=sys.stderr)
+        return 2
+    ext = os.path.splitext(ns.file)[1].lower()
+    ctype = _CONTENT_TYPES.get(ext)
+    if not ctype:
+        print(f"error: unsupported media type {ext} (use png/jpg/gif/webp/mp4)", file=sys.stderr)
+        return 2
+    pre = _api("POST", "/media/presign",
+               {"filename": os.path.basename(ns.file), "contentType": ctype})
+    upload_url = pre.get("uploadUrl") or pre.get("presignedUrl") or pre.get("url")
+    public_url = pre.get("publicUrl") or pre.get("public_url")
+    if not upload_url:
+        print(f"error: no presigned URL in response: {json.dumps(pre)[:300]}", file=sys.stderr)
+        return 1
+    with open(ns.file, "rb") as f:
+        data = f.read()
+    req = urllib.request.Request(upload_url, data=data,
+                                 headers={"Content-Type": ctype}, method="PUT")
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            if resp.status not in (200, 201, 204):
+                print(f"error: upload HTTP {resp.status}", file=sys.stderr)
+                return 1
+    except urllib.error.HTTPError as e:
+        print(f"error: upload failed HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:200]}", file=sys.stderr)
+        return 1
+    print(public_url or "(uploaded — no publicUrl in presign response)")
+    return 0
+
+
 def cmd_post(ns) -> int:
     try:
         payload = build_post_payload(ns.content, ns.platform, ns.account_id, ns.profile_id,
@@ -133,6 +170,8 @@ def main(argv=None) -> int:
     p.add_argument("--timezone", default=None, help="IANA tz for --schedule (default UTC)")
 
     sub.add_parser("usage", help="show plan usage stats")
+    pu = sub.add_parser("upload", help="upload local media, prints public URL")
+    pu.add_argument("--file", required=True)
 
     ns = parser.parse_args(argv)
 
@@ -142,6 +181,8 @@ def main(argv=None) -> int:
         return cmd_accounts()
     if ns.cmd == "post":
         return cmd_post(ns)
+    if ns.cmd == "upload":
+        return cmd_upload(ns)
     if ns.cmd == "usage":
         print(json.dumps(_api("GET", "/usage-stats")))
         return 0
