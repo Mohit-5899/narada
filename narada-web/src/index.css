@@ -952,12 +952,21 @@ th {
   text-transform: uppercase;
   padding: 0.45rem 0.6rem;
   border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
 }
 td {
   padding: 0.55rem 0.6rem;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
+  /* structural cells (agent/status/cost/dates/trace) never break words */
+  white-space: nowrap;
+}
+/* only the long task description wraps; it soaks up the remaining width */
+td.task-cell {
+  white-space: normal;
   overflow-wrap: anywhere;
+  width: 100%;
+  min-width: 24ch;
 }
 tbody tr:hover {
   background: rgba(255, 153, 51, 0.03);
@@ -966,6 +975,7 @@ tbody tr:hover {
 /* ---------- badges ---------- */
 .badge {
   display: inline-block;
+  white-space: nowrap;
   padding: 0.12rem 0.6rem;
   border-radius: 999px;
   font-size: 0.78rem;
