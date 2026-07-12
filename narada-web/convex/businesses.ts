@@ -36,6 +36,7 @@ export const create = mutation({
     one_liner: v.optional(v.string()),
     logo_id: v.optional(v.id("_storage")),
     image_ids: v.array(v.id("_storage")),
+    pdf_ids: v.optional(v.array(v.id("_storage"))),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -45,6 +46,7 @@ export const create = mutation({
     if (!name) throw new Error("Business name is required");
     if (!website) throw new Error("Website URL is required");
     if (args.image_ids.length > 5) throw new Error("Max 5 images");
+    if ((args.pdf_ids?.length ?? 0) > 3) throw new Error("Max 3 PDFs");
 
     const logo_url = args.logo_id
       ? ((await ctx.storage.getUrl(args.logo_id)) ?? undefined)
@@ -53,6 +55,10 @@ export const create = mutation({
       args.image_ids.map((id) => ctx.storage.getUrl(id)),
     );
     const images = imageUrls.filter((u): u is string => u !== null);
+    const pdfUrls = await Promise.all(
+      (args.pdf_ids ?? []).map((id) => ctx.storage.getUrl(id)),
+    );
+    const pdfs = pdfUrls.filter((u): u is string => u !== null);
 
     const link_token = randomToken();
     const businessId = await ctx.db.insert("businesses", {
@@ -60,6 +66,7 @@ export const create = mutation({
       website,
       logo_url,
       images,
+      pdfs: pdfs.length ? pdfs : undefined,
       one_liner: args.one_liner?.trim() || undefined,
       owner: userId,
       link_token,

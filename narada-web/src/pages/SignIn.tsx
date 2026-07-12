@@ -64,6 +64,7 @@ export default function SignIn() {
     <div className="page">
       <Header />
       <div className="card auth-card">
+        <p className="eyebrow">Narada</p>
         <h2>{flow === "signUp" ? "Create your Narada account" : "Welcome back"}</h2>
         <p className="muted">
           {flow === "signUp"
@@ -75,6 +76,7 @@ export default function SignIn() {
             <input
               type="text"
               placeholder="Your name"
+              aria-label="Your name"
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
@@ -83,6 +85,7 @@ export default function SignIn() {
           <input
             type="email"
             placeholder="you@business.com"
+            aria-label="Email address"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
@@ -91,6 +94,7 @@ export default function SignIn() {
           <input
             type="password"
             placeholder="Password (8+ characters)"
+            aria-label="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             autoComplete={flow === "signUp" ? "new-password" : "current-password"}

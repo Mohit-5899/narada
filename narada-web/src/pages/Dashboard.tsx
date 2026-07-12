@@ -5,6 +5,32 @@ import Header from "../components/Header";
 const timeOf = (ts: number | undefined): string =>
   ts ? new Date(ts).toLocaleString() : "—";
 
+const DONE = new Set(["done", "completed", "published", "live"]);
+
+type Task = { status: string; cost_usd?: number };
+
+function StatRow({ campaigns }: { campaigns: { tasks: Task[] }[] }) {
+  const tasks = campaigns.flatMap((c) => c.tasks);
+  const done = tasks.filter((t) => DONE.has(t.status)).length;
+  const cost = tasks.reduce((sum, t) => sum + (t.cost_usd ?? 0), 0);
+  return (
+    <div className="stat-row">
+      <div className="stat">
+        <div className="stat-value">{done}</div>
+        <div className="stat-label">Tasks done</div>
+      </div>
+      <div className="stat">
+        <div className="stat-value">${cost.toFixed(2)}</div>
+        <div className="stat-label">Total cost</div>
+      </div>
+      <div className="stat">
+        <div className="stat-value">{campaigns.length}</div>
+        <div className="stat-label">Campaigns</div>
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const overview = useQuery(api.dashboard.overview);
 
@@ -39,6 +65,8 @@ export default function Dashboard() {
         <p className="muted">
           Read-only, live. Every task your agents run lands here in real time.
         </p>
+
+        <StatRow campaigns={overview.campaigns} />
 
         {overview.campaigns.length === 0 && (
           <div className="card notice">

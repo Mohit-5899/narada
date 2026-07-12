@@ -35,6 +35,7 @@ function OnboardingForm() {
   const [oneLiner, setOneLiner] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
   const [images, setImages] = useState<File[]>([]);
+  const [pdfs, setPdfs] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -64,12 +65,14 @@ function OnboardingForm() {
     try {
       const logo_id = logo ? await upload(logo) : undefined;
       const image_ids = await Promise.all(images.map(upload));
+      const pdf_ids = await Promise.all(pdfs.map(upload));
       await create({
         name: name.trim(),
         website: url,
         one_liner: oneLiner.trim() || undefined,
         logo_id,
         image_ids,
+        pdf_ids: pdf_ids.length ? pdf_ids : undefined,
       });
       // getMine goes non-null reactively → Start flips to <Analyzing/>.
     } catch (err) {
@@ -130,6 +133,17 @@ function OnboardingForm() {
               multiple
               onChange={(e) =>
                 setImages(Array.from(e.target.files ?? []).slice(0, MAX_IMAGES))
+              }
+            />
+          </label>
+          <label>
+            Brochures / decks <span className="muted">(optional PDFs, up to 3)</span>
+            <input
+              type="file"
+              accept="application/pdf"
+              multiple
+              onChange={(e) =>
+                setPdfs(Array.from(e.target.files ?? []).slice(0, 3))
               }
             />
           </label>

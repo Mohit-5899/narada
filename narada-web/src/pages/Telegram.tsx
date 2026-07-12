@@ -33,7 +33,8 @@ export default function Telegram() {
     <div className="page">
       <Header />
       <div className="card notice handoff">
-        <h2>🎉 Your marketing team is ready</h2>
+        <p className="eyebrow">Handoff</p>
+        <h2>Your marketing team is ready</h2>
         <p>
           Narada and his ganas now know <strong>{business.name}</strong>. Your
           command center is Telegram — say{" "}

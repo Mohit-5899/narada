@@ -2,14 +2,21 @@ import { Authenticated } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { convexConfigured } from "../config";
 
+// ponytail: read hash directly — Header re-renders with every route change
+// because App re-renders the whole page tree on hashchange.
+const isActive = (route: string): boolean =>
+  window.location.hash.replace(/^#/, "") === route;
+
 export default function Header() {
   return (
     <header className="header">
       <a href="#/" className="wordmark">
         <span className="accent">✦</span> Narada
       </a>
-      <nav>
-        <a href="#/dashboard">Dashboard</a>
+      <nav aria-label="Main">
+        <a href="#/dashboard" className={isActive("/dashboard") ? "active" : undefined}>
+          Dashboard
+        </a>
         {convexConfigured && (
           <Authenticated>
             <SignOutButton />
