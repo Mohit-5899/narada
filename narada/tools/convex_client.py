@@ -90,7 +90,7 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("log-task", help="log a completed agency task")
     p.add_argument("--business-id", required=True)
-    p.add_argument("--task-type", required=True, choices=["research", "copy", "publish", "analysis", "chat"])
+    p.add_argument("--task-type", required=True, choices=["research", "copy", "creative", "publish", "analysis", "chat"])
     p.add_argument("--status", required=True, choices=["done", "failed"])
     p.add_argument("--summary", required=True)
     p.add_argument("--surface", default=None)
