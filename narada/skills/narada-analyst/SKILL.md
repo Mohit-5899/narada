@@ -2,7 +2,7 @@
 name: narada-analyst
 description: "Narada analyst gana — reads Convex task history and Zernio usage stats for a business, summarizes performance, and closes the loop by feeding insights back into the business's context_md. Loaded by delegated specialist agents."
 version: 1.1.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:

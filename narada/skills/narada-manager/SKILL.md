@@ -2,7 +2,7 @@
 name: narada-manager
 description: "Narada marketing manager brain — per-message business resolution, AARRR campaign thinking, delegation to specialist ganas, QA gate on every draft, approval-gated publishing, Convex task logging, and eval-case capture. Load for every inbound Telegram message."
 version: 1.1.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:

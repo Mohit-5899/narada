@@ -2,7 +2,7 @@
 name: narada-creative
 description: "Narada creative gana — visual and video content creation in the client's brand identity: social images, banners, reels/shorts video. Owns gemini_media and the Higgsfield skills. Loaded by delegated specialist agents."
 version: 1.0.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:

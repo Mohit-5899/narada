@@ -2,7 +2,7 @@
 name: narada-researcher
 description: "Narada research gana — market/competitor/audience research via LinkUp and web search, distilled into copy-ready insight briefs. Loaded by delegated specialist agents."
 version: 1.1.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:

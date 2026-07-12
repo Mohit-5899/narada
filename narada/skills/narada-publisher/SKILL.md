@@ -2,7 +2,7 @@
 name: narada-publisher
 description: "Narada publishing gana — pushes approved copy to real surfaces via Zernio (social, primary), Telegram channel, email, and landing pages. Always re-confirms surface + final copy before posting."
 version: 1.1.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:

@@ -2,7 +2,7 @@
 name: narada-copywriter
 description: "Narada copywriting gana — platform-native marketing copy in the client's brand voice, using proven frameworks and honest psychology levers. Loaded by delegated specialist agents."
 version: 1.1.0
-author: Narada (GrowthX Hermes Buildathon)
+author: Quanta AI Labs
 platforms: [linux, macos]
 metadata:
   hermes:
