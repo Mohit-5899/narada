@@ -27,7 +27,7 @@ You are the build partner for this hackathon. The source of truth for every deci
   - Deployment env vars set: `AGENT_SHARED_SECRET`, `AUTH_RESEND_KEY`, `JWT_PRIVATE_KEY`, `JWKS`, `SITE_URL`
   - ⚠️ The Resend key was pasted in chat once — rotate it after the event
 - **GitHub:** `Mohit-5899/narada` (public, `main`)
-- **Telegram bot:** NOT created yet (BotFather, event-day). Open bot requires explicit `TELEGRAM_ALLOWED_USERS=*` — Hermes gateway **fails closed** by default (verified: `gateway/authz_mixin.py:264`)
+- **Telegram bot:** **@NaradaMarketingbot** (display name "Narada", created via BotFather). Token lives in `narada/.env.local` (`TELEGRAM_BOT_TOKEN`) — never in git or chat. Open bot requires explicit `TELEGRAM_ALLOWED_USERS=*` — Hermes gateway **fails closed** by default (verified: `gateway/authz_mixin.py:264`)
 
 ## Commands
 
