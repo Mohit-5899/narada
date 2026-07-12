@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """Narada ↔ Convex bridge.
 
-POSTs to a single Convex HTTP action at $CONVEX_URL/api/agent with a shared
-secret. The Convex side dispatches on the "fn" field. Functions:
+POSTs to the Convex HTTP action at $CONVEX_URL/api/agent with the shared
+secret in the "x-agent-secret" header. The Convex side dispatches on the
+"type" field (see narada-web/convex/http.ts — the single source of truth):
 
-  get-business    fn=get_business_by_telegram_id  {telegram_user_id}
-  bind-telegram   fn=bind_telegram                {link_token, telegram_user_id}
-  save-brief      fn=save_brand_brief             {business_id, brief(json)}
-  log-task        fn=log_task                     {business_id, task_type, status, summary, surface?, output_ref?}
-  append-eval-case fn=append_eval_case            {business_id, brief, failure, expected}
-  get-tasks       fn=get_tasks                    {business_id, limit}
+  get-business     type=get_business   {telegram_user_id}
+  bind-telegram    type=telegram_link  {link_token, telegram_user_id}
+  save-brief       type=brief          {business_id|link_token, ...brief fields}
+  log-task         type=log_task       {business_id, agent_role, description, status, cost_usd?, trace_url?}
+  append-eval-case type=eval_case      {business_id, brief, failure, expected}
+  get-tasks        type=get_tasks      {business_id, limit}
 
-Env: CONVEX_URL (e.g. https://happy-otter-123.convex.site), CONVEX_AGENT_SECRET.
-Exit codes: 0 ok, 1 remote/HTTP error, 2 bad usage/env.
+Env: CONVEX_URL (the .convex.site URL, e.g. https://agile-marlin-826.convex.site),
+CONVEX_AGENT_SECRET. Exit codes: 0 ok, 1 remote/HTTP error, 2 bad usage/env.
 
 Smoke test (offline): python3 convex_client.py --smoke
 """
@@ -37,21 +38,21 @@ def _require_env() -> tuple:
     return url, secret
 
 
-def build_payload(fn: str, args: dict) -> dict:
-    """Pure payload builder (unit-testable offline)."""
-    clean = {k: v for k, v in args.items() if v is not None}
-    return {"fn": fn, "args": clean}
+def build_payload(type_: str, fields: dict) -> dict:
+    """Pure payload builder (unit-testable offline). Flat dict, None dropped."""
+    clean = {k: v for k, v in fields.items() if v is not None}
+    return {"type": type_, **clean}
 
 
-def call_convex(fn: str, args: dict) -> dict:
+def call_convex(type_: str, fields: dict) -> dict:
     url, secret = _require_env()
-    payload = build_payload(fn, args)
+    payload = build_payload(type_, fields)
     req = urllib.request.Request(
         f"{url}/api/agent",
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {secret}",
+            "x-agent-secret": secret,
         },
         method="POST",
     )
@@ -114,9 +115,9 @@ def main(argv=None) -> int:
         return 2
 
     if ns.cmd == "get-business":
-        result = call_convex("get_business_by_telegram_id", {"telegram_user_id": str(ns.telegram_user_id)})
+        result = call_convex("get_business", {"telegram_user_id": str(ns.telegram_user_id)})
     elif ns.cmd == "bind-telegram":
-        result = call_convex("bind_telegram", {"link_token": ns.link_token, "telegram_user_id": str(ns.telegram_user_id)})
+        result = call_convex("telegram_link", {"link_token": ns.link_token, "telegram_user_id": str(ns.telegram_user_id)})
     elif ns.cmd == "save-brief":
         raw = ns.brief
         if raw.startswith("@"):
@@ -127,14 +128,22 @@ def main(argv=None) -> int:
         except json.JSONDecodeError as e:
             print(f"error: --brief is not valid JSON: {e}", file=sys.stderr)
             return 2
-        result = call_convex("save_brand_brief", {"business_id": ns.business_id, "brief": brief})
+        if not isinstance(brief, dict):
+            print("error: --brief must be a JSON object of brief fields", file=sys.stderr)
+            return 2
+        # Brief fields are flattened into the payload (status, offering,
+        # audience, tone, competitors, colors, campaign_ideas).
+        result = call_convex("brief", {"business_id": ns.business_id, **brief})
     elif ns.cmd == "log-task":
         result = call_convex("log_task", {
-            "business_id": ns.business_id, "task_type": ns.task_type, "status": ns.status,
-            "summary": ns.summary, "surface": ns.surface, "output_ref": ns.output_ref,
+            "business_id": ns.business_id,
+            "agent_role": ns.task_type,          # research|copy|publish|analysis|chat
+            "status": ns.status,
+            "description": ns.summary + (f" [surface: {ns.surface}]" if ns.surface else ""),
+            "trace_url": ns.output_ref,
         })
     elif ns.cmd == "append-eval-case":
-        result = call_convex("append_eval_case", {
+        result = call_convex("eval_case", {
             "business_id": ns.business_id, "brief": ns.brief,
             "failure": ns.failure, "expected": ns.expected,
         })
@@ -149,10 +158,10 @@ def main(argv=None) -> int:
 
 def smoke() -> int:
     """Offline self-checks — no network, no env required."""
-    p = build_payload("log_task", {"business_id": "b1", "surface": None, "summary": "s"})
-    assert p == {"fn": "log_task", "args": {"business_id": "b1", "summary": "s"}}, p
-    p = build_payload("get_business_by_telegram_id", {"telegram_user_id": "42"})
-    assert p["args"]["telegram_user_id"] == "42"
+    p = build_payload("log_task", {"business_id": "b1", "trace_url": None, "description": "s"})
+    assert p == {"type": "log_task", "business_id": "b1", "description": "s"}, p
+    p = build_payload("get_business", {"telegram_user_id": "42"})
+    assert p["telegram_user_id"] == "42" and p["type"] == "get_business", p
     configured = bool(os.environ.get("CONVEX_URL")) and bool(os.environ.get("CONVEX_AGENT_SECRET"))
     print(f"convex_client smoke OK (payload builder). env configured: {configured}")
     return 0

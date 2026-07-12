@@ -43,9 +43,43 @@ http.route({
 
     try {
       switch (body.type) {
+        case "get_business": {
+          const result = await ctx.runQuery(internal.agent.getBusinessByTelegram, {
+            telegram_user_id: str(body, "telegram_user_id"),
+          });
+          return ok({ result });
+        }
+        case "get_tasks": {
+          const result = await ctx.runQuery(internal.agent.getTasks, {
+            business_id: str(body, "business_id") as never,
+            limit: typeof body.limit === "number" ? body.limit : undefined,
+          });
+          return ok({ result });
+        }
+        case "log_task": {
+          const id = await ctx.runMutation(internal.agent.logTask, {
+            business_id: str(body, "business_id") as never,
+            agent_role: str(body, "agent_role"),
+            description: str(body, "description"),
+            status: str(body, "status"),
+            cost_usd: typeof body.cost_usd === "number" ? body.cost_usd : undefined,
+            trace_url: optStr(body, "trace_url"),
+          });
+          return ok({ task_id: id });
+        }
+        case "eval_case": {
+          const id = await ctx.runMutation(internal.agent.appendEvalCase, {
+            business_id: str(body, "business_id") as never,
+            brief: str(body, "brief"),
+            failure: str(body, "failure"),
+            expected: str(body, "expected"),
+          });
+          return ok({ eval_case_id: id });
+        }
         case "brief": {
           const id = await ctx.runMutation(internal.agent.writeBrief, {
-            link_token: str(body, "link_token"),
+            link_token: optStr(body, "link_token"),
+            business_id: optStr(body, "business_id") as never,
             status: body.status as never,
             offering: optStr(body, "offering"),
             audience: optStr(body, "audience"),
@@ -87,7 +121,9 @@ http.route({
           return ok({ task_id: id });
         }
         default:
-          return badRequest("unknown type (brief|telegram_link|campaign|task)");
+          return badRequest(
+            "unknown type (brief|telegram_link|campaign|task|get_business|get_tasks|log_task|eval_case)",
+          );
       }
     } catch (error) {
       // Convex validators + mutations enforce the real invariants; surface

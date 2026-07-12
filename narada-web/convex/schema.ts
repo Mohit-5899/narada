@@ -54,4 +54,13 @@ export default defineSchema({
     created_at: v.number(),
     completed_at: v.optional(v.number()),
   }).index("by_campaign", ["campaign_id"]),
+
+  // Failure/escalation cases appended by the manager agent (closed-loop evals).
+  eval_cases: defineTable({
+    business_id: v.id("businesses"),
+    brief: v.string(),
+    failure: v.string(),
+    expected: v.string(),
+    created_at: v.number(),
+  }).index("by_business", ["business_id"]),
 });
