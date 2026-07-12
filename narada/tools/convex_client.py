@@ -102,6 +102,8 @@ def main(argv=None) -> int:
     p.add_argument("--failure", required=True)
     p.add_argument("--expected", required=True)
 
+    sub.add_parser("get-pending", help="list briefs awaiting the onboarding crew (+ business data)")
+
     p = sub.add_parser("get-tasks", help="read task history for a business")
     p.add_argument("--business-id", required=True)
     p.add_argument("--limit", type=int, default=50)
@@ -147,6 +149,8 @@ def main(argv=None) -> int:
             "business_id": ns.business_id, "brief": ns.brief,
             "failure": ns.failure, "expected": ns.expected,
         })
+    elif ns.cmd == "get-pending":
+        result = call_convex("get_pending", {})
     elif ns.cmd == "get-tasks":
         result = call_convex("get_tasks", {"business_id": ns.business_id, "limit": ns.limit})
     else:  # pragma: no cover

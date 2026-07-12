@@ -76,6 +76,24 @@ export const getBusinessByTelegram = internalQuery({
   },
 });
 
+// Briefs awaiting the onboarding crew (status "analyzing") + business data.
+// Polled by the Hermes cron / manager to trigger analysis runs.
+export const getPendingBriefs = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const pending = await ctx.db
+      .query("brand_briefs")
+      .filter((q) => q.eq(q.field("status"), "analyzing"))
+      .collect();
+    return await Promise.all(
+      pending.map(async (brief) => {
+        const business = await ctx.db.get(brief.business_id);
+        return { brief, business };
+      }),
+    );
+  },
+});
+
 export const getTasks = internalQuery({
   args: { business_id: v.id("businesses"), limit: v.optional(v.number()) },
   handler: async (ctx, { business_id, limit }) => {

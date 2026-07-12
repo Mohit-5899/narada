@@ -49,6 +49,10 @@ http.route({
           });
           return ok({ result });
         }
+        case "get_pending": {
+          const result = await ctx.runQuery(internal.agent.getPendingBriefs, {});
+          return ok({ result });
+        }
         case "get_tasks": {
           const result = await ctx.runQuery(internal.agent.getTasks, {
             business_id: str(body, "business_id") as never,
