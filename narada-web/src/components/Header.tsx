@@ -14,6 +14,9 @@ export default function Header() {
         <span className="accent">✦</span> Narada
       </a>
       <nav aria-label="Main">
+        <a href="#/guide" className={isActive("/guide") ? "active" : undefined}>
+          Guide
+        </a>
         <a href="#/dashboard" className={isActive("/dashboard") ? "active" : undefined}>
           Dashboard
         </a>
