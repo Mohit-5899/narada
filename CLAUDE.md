@@ -75,4 +75,4 @@ CONVEX_URL=https://agile-marlin-826.convex.site CONVEX_AGENT_SECRET=<secret> \
 ## Status (update as we go)
 
 **Verified ✅:** npm install · vite build · all smoke tests · schema live on Convex · wire auth 401 · authed `get_business` round-trip · guest auth JWT keys set · Resend key set.
-**Pending ⏳:** Telegram bot creation (BotFather) · gateway wiring per `narada/README.md` (env: `TELEGRAM_ALLOWED_USERS=*`, `NARADA_TOOLS_DIR` absolute) · onboarding→crew trigger (how Hermes learns a new business signed up) · Dodo checkout page (stub) · LinkedIn publisher (honest stub, P4) · Langfuse observability wiring · magic-link end-to-end test.
+**Pending ⏳:** Telegram bot @NaradaMarketingbot created — token goes in narada/.env.local · gateway wiring per `narada/README.md` (env: `TELEGRAM_ALLOWED_USERS=*`, `NARADA_TOOLS_DIR` absolute) · onboarding→crew trigger (how Hermes learns a new business signed up) · Dodo checkout page (stub) · LinkedIn publisher (honest stub, P4) · Langfuse observability wiring · magic-link end-to-end test.
