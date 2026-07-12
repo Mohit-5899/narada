@@ -13,7 +13,8 @@ narada/
 ├── skills/            narada-manager + 4 specialist ganas (SKILL.md each)
 ├── tools/             convex_client, zernio (social publishing, primary),
 │                      publish_telegram_channel, send_email,
-│                      deploy_landing_page, publish_linkedin (stub)
+│                      deploy_landing_page, publish_linkedin (stub),
+│                      langfuse_ops (observability: list/diff/alert)
 ├── config/            hermes-config-snippet.yaml — blocks for ~/.hermes/config.yaml
 ├── evals/             eval_set.jsonl (20 briefs) + run_evals.py,
 │                      check_skills.py (static skill gate),
@@ -147,6 +148,35 @@ python3 narada/evals/run_evals.py --details  # per-case failures
 Checks are programmatic where honest (CTA presence, banned words, platform
 format incl. email subject and single-H1 rules); `respects_tone` is reported
 as MANUAL and excluded from the pass rate — an LLM judge is the upgrade path.
+
+## Observability L5 (Langfuse: diff two runs + alerts)
+
+`tools/langfuse_ops.py` (stdlib only) reads the Langfuse public API. Env:
+`LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_BASE_URL` (default
+`https://jp.cloud.langfuse.com`); `HERMES_LANGFUSE_*` variants win if set.
+
+```bash
+# recent runs: time, id, latency, cost, observation count
+python3 "$NARADA_TOOLS_DIR/langfuse_ops.py" list --limit 20
+
+# explain a regression: side-by-side per-observation diff of two runs
+# (start offset, type, name, latency, in/out tokens; * marks divergent rows)
+# + summary: latency Δ, cost Δ, obs count Δ, first divergent step named
+python3 "$NARADA_TOOLS_DIR/langfuse_ops.py" diff --a <trace_id> --b <trace_id>
+
+# breach scan over the last N traces: cost > --max-cost, latency >
+# --max-latency, or any observation at level ERROR. One line per breach,
+# exit 1; clean = silent + exit 0 (cron-friendly).
+python3 "$NARADA_TOOLS_DIR/langfuse_ops.py" alert --max-cost 1.0 --max-latency 120 --window 10
+```
+
+Alert delivery — Hermes cron pings the owner on Telegram only on breach:
+
+```bash
+uv run hermes cron create "every 15m" \
+  "Run $NARADA_TOOLS_DIR/langfuse_ops.py alert --max-cost 1.5; if it printed breaches, summarize them for the owner; if silent, output nothing." \
+  --deliver telegram
+```
 
 ## Surface reliability
 
