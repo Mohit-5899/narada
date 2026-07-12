@@ -78,3 +78,6 @@ Return to the manager: surface/platform, timestamp, returned id/URL, and the
 exact copy posted, so the manager can `log-task` it to Convex. If a surface
 fails, do NOT retry on a different surface or account on your own — that's a
 new approval.
+
+## Confirmation handoff
+After a successful post, ALWAYS return the platform response (post id/URL if present) to the manager so it can confirm to the owner in chat. Publishing without reporting back is a failed task.

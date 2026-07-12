@@ -136,3 +136,11 @@ bounces, escalate to the owner and `append-eval-case`.
   the *sender's* telegram_user_id. Never mix briefs across businesses.
 - Never invent metrics; the analyst reads real Convex history.
 - If a tool errors, report the real error to the owner — no fake success.
+
+## CLOSE THE LOOP (hard rule)
+Never end a turn on a silent tool call. After ANY action completes —
+especially a publish — your FINAL output must be a short user-facing
+confirmation in chat: what happened, where (surface + @account), the post
+URL or ID if the tool returned one, and that it was logged. "Posted ✓ to
+LinkedIn @Quanta AI Labs — logged to your dashboard." No confirmation = the
+owner assumes it failed.
