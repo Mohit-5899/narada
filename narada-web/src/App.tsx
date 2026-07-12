@@ -8,6 +8,7 @@ import Brief from "./pages/Brief";
 import Telegram from "./pages/Telegram";
 import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
+import Guide from "./pages/Guide";
 import Header from "./components/Header";
 
 // ponytail: 20-line hash router instead of react-router — five static routes,
@@ -34,6 +35,7 @@ export default function App() {
 
   if (route === "/") return <Landing />;
   if (route === "/checkout") return <Checkout />;
+  if (route === "/guide") return <Guide />;
 
   const render = AUTHED_ROUTES[route];
   if (!render) return <Landing />;
