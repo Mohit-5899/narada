@@ -109,8 +109,10 @@ export default function Guide() {
               memory is kept; only the chat thread resets)
             </li>
             <li>
-              <code>/start &lt;token&gt;</code> — re-link your business (the
-              token is on the Telegram page after onboarding)
+              <code>/start &lt;token&gt;</code> — re-link your business. Your token
+              lives on <a href="#/telegram">the Telegram page</a> of this web
+              app — sign in and open it anytime; the one-tap connect button
+              is there too
             </li>
             <li>
               <code>/stop</code> — cancel a running task
