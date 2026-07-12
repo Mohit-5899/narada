@@ -30,9 +30,27 @@
 | # | Problem | Direction | Owner/when |
 |---|---------|-----------|-----------|
 | P1 | **Web↔Telegram identity link** | Deep link `t.me/<bot>?start=<token>`; token minted at onboarding, stored in Convex `businesses.link_token`; bot matches on /start → binds `telegram_user_id` to business | Design done, build hour 1 |
-| ~~P2~~ | ~~Multi-user Telegram gateway~~ | **RESOLVED → D10**: single profile, OPEN bot (`TELEGRAM_ALLOWED_USERS` unset = unrestricted per gateway/config.py pattern). Business identity per-message: telegram_user_id → Convex lookup → load brand brief. Multi-profile rejected (needs manual bot token + provisioning per signup — breaks live signups, 1.5–3h vs 30–60min). Verify open-bot behavior in 10-min spike at hour 0 | done (verify hr 0) |
+| ~~P2~~ | ~~Multi-user Telegram gateway~~ | **RESOLVED → D10 (CORRECTED)**: single profile, open bot — but unset `TELEGRAM_ALLOWED_USERS` **fails CLOSED** (verified: `gateway/authz_mixin.py:264` default-deny; fail-open removed in #24457/#34515). Must opt in explicitly: **`TELEGRAM_ALLOWED_USERS=*` or `GATEWAY_ALLOW_ALL_USERS=true`** (documented in narada/config + .env.example). Business identity per-message: telegram_user_id → Convex lookup | done ✅ |
 | ~~P3~~ | ~~Campaign loop flow~~ | **RESOLVED → D9**: no workflow; general chat + main loop + skills + tools | done |
 | P4 | Which real publish surfaces? X API flaky risk | Primary: LinkedIn + email (Resend) + Telegram channel; X if keys work | decide hour 1 |
+
+## 2.5 Live infrastructure 🔌
+
+| Service | Value |
+|---------|-------|
+| Convex deployment | `dev:agile-marlin-826` (US East, project "marketing-os", branch dev/mohit-mandawat) |
+| Convex client URL | `https://agile-marlin-826.convex.cloud` → `VITE_CONVEX_URL` in narada-web |
+| Convex HTTP Actions URL | `https://agile-marlin-826.convex.site` → base URL for `POST /api/agent` (backend convex_client.py points HERE, not .cloud) |
+
+Integration steps (once UI worktree merges):
+```bash
+cd narada-web
+npx convex login          # one-time browser auth
+npx convex dev            # links to agile-marlin-826, pushes schema+functions, watches
+# .env.local:  CONVEX_DEPLOYMENT=dev:agile-marlin-826
+#              VITE_CONVEX_URL=https://agile-marlin-826.convex.cloud
+```
+Backend env: `CONVEX_SITE_URL=https://agile-marlin-826.convex.site` + `AGENT_SHARED_SECRET=<generate>` (same value in Convex env via `npx convex env set`).
 
 ## 3. Architecture (current)
 
@@ -107,3 +125,5 @@ Edge cases: no website → 3 chat questions fallback · unreachable site → par
 - 2026-07-12: D10 locked — single profile + open Telegram bot; per-business context via Convex lookup by telegram_user_id. Multi-profile rejected for live signups. P2 closed (10-min verify at hour 0). Global MEMORY.md = agency-level rules only; brand rules per business in Convex.
 - 2026-07-12: D11 — business model split: event day sells HOSTED service (Dodo $9/mo, no guide needed — we run the gateway). Self-host deployment guide = post-event week-1 work, open-core play (guide + skills free, hosted paid). Event-day version: 30-min repo README at hour 7 (architecture + run steps).
 - 2026-07-12: D12 — name = NARADA. Tagline: "Every business has a story. Narada makes the three worlds hear it." TODO tonight: check handles (naradaos.com, getnarada.com, narada.marketing, @narada bot username on Telegram, X handle).
+- 2026-07-12: D13 — auth switched to email+password (Convex Auth Password provider, name captured at signup; guest/Anonymous kept for demos). Supersedes D8 magic link — user wants classic sign-up-once/sign-in-after; Resend key stays set but unused by auth.
+- 2026-07-12: MVP harvested from both worktree agents → committed d6c61a9. D10 CORRECTED: open bot needs explicit `TELEGRAM_ALLOWED_USERS=*` (gateway fails closed by default). Known gaps from agent reports: (1) Convex-side /api/agent dispatcher exists in narada-web but convex_client.py fn-contract must be verified against it hour 1; (2) npm install + smoke tests never ran (sandbox denied) — first thing to verify; (3) LinkedIn tool is honest stub (P4); (4) NARADA_TOOLS_DIR must be absolute + exported to gateway process; (5) manager skill must pass brand brief into every delegate_task (children don't inherit context).
