@@ -34,6 +34,7 @@ Exit codes: 0 all pass (or dry-valid), 1 check failures, 2 setup problem.
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -139,22 +140,52 @@ def extract_final_response(stdout: str):
     return "\n".join(body).strip() or None
 
 
+SKILLS_DIR = REPO_ROOT / "narada" / "skills"
+EVAL_MODEL = os.environ.get("NARADA_EVAL_MODEL", "claude-haiku-4-5")
+
+
+def anthropic_call(system: str, user: str) -> str:
+    """Direct Anthropic Messages API — production parity: the gateway injects
+    skill content as context; here the SKILL.md is the system prompt.
+    No OpenRouter, no Hermes loop (cases are tool-free by design)."""
+    import urllib.request
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("ANTHROPIC_API_KEY not set")
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=json.dumps({
+            "model": EVAL_MODEL,
+            "max_tokens": 1024,
+            "system": system,
+            "messages": [{"role": "user", "content": user}],
+        }).encode("utf-8"),
+        headers={"x-api-key": key, "anthropic-version": "2023-06-01",
+                 "content-type": "application/json"},
+        method="POST")
+    with urllib.request.urlopen(req, timeout=LIVE_TIMEOUT_S) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    return "".join(b.get("text", "") for b in data.get("content", []))
+
+
 def run_live_case(case: dict, out_dir: Path) -> dict:
     """Execute one case; return {'id', 'agent', 'results': {name: bool} | None, 'error': str|None}."""
-    cmd = build_cmd(case)
+    skill_file = SKILLS_DIR / f"narada-{case['agent']}" / "SKILL.md"
     try:
-        proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True,
-                              text=True, timeout=LIVE_TIMEOUT_S)
-    except (subprocess.TimeoutExpired, OSError) as e:
+        skill = skill_file.read_text(encoding="utf-8")
+    except OSError as e:
         return {"id": case["id"], "agent": case["agent"], "results": None,
-                "error": f"run failed: {e}"}
-    (out_dir / f"{case['id']}.raw.txt").write_text(
-        proc.stdout + ("\n--- stderr ---\n" + proc.stderr if proc.stderr.strip() else ""),
-        encoding="utf-8")
-    text = extract_final_response(proc.stdout)
-    if text is None:
+                "error": f"skill file missing: {e}"}
+    system = "You are a Narada specialist agent. Follow this skill exactly.\n\n" + skill
+    try:
+        text = anthropic_call(system, case["task_prompt"])
+    except Exception as e:
         return {"id": case["id"], "agent": case["agent"], "results": None,
-                "error": f"no FINAL RESPONSE in output (exit {proc.returncode}); see {case['id']}.raw.txt"}
+                "error": f"API call failed: {e}"}
+    (out_dir / f"{case['id']}.raw.txt").write_text(text, encoding="utf-8")
+    if not text.strip():
+        return {"id": case["id"], "agent": case["agent"], "results": None,
+                "error": "empty response"}
     (out_dir / f"{case['id']}.txt").write_text(text, encoding="utf-8")
     results = {check_name(c): run_check(c, text) for c in case["checks"]}
     return {"id": case["id"], "agent": case["agent"], "results": results, "error": None}

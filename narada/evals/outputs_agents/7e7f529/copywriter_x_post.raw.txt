@@ -1,0 +1,51 @@
+🤖 AI Agent with Tool Calling
+==================================================
+🤖 AI Agent initialized with model: 
+🔑 Using API key: sk-ant-a...AwAA
+🛠️  Final tool selection (21 tools): clarify, delegate_task, execute_code, memory, patch, process, project_create, project_list, project_switch, read_file, search_files, session_search, skill_manage, skill_view, skills_list, terminal, text_to_speech, todo, video_analyze, vision_analyze, write_file
+🛠️  Loaded 21 tools: clarify, delegate_task, execute_code, memory, patch, process, project_create, project_list, project_switch, read_file, search_files, session_search, skill_manage, skill_view, skills_list, terminal, text_to_speech, todo, video_analyze, vision_analyze, write_file
+⚠️  Some tools may not work due to missing requirements: ['browser', 'browser-cdp', 'computer_use', 'cronjob', 'discord', 'discord_admin', 'feishu_doc', 'feishu_drive', 'hermes-yuanbao', 'homeassistant', 'image_gen', 'kanban', 'spotify', 'video_gen', 'web', 'x_search']
+📊 Context limit: 256,000 tokens (compress at 75% = 192,000)
+
+📝 User Query: Tell me about the latest developments in Python 3.13 and what new features developers should know about. Please search for current information and try it out.
+
+==================================================
+💬 Starting conversation: 'Tell me about the latest developments in Python 3.13 and wha...'
+⚠️  Context file AGENTS.md TRUNCATED: 70922 chars exceeds limit of 61440 — trim the file, pin a larger context_file_max_chars, or use a larger-context model!
+
+🔄 Making API call #1/10...
+   📊 Request size: 2 messages, ~19,888 tokens (~79,551 chars)
+   🔧 Available tools: 21
+⚠️  API call failed (attempt 1/3): NotFoundError [HTTP 404]
+   🔌 Provider:   Model: 
+   🌐 Endpoint: https://api.anthropic.com
+   📝 Error: HTTP 404: Error code: 404
+   ⏱️  Elapsed: 0.62s  Context: 2 msgs, ~19,888 tokens
+⏳ Retrying in 2.5s (attempt 1/3)...
+⚠️  API call failed (attempt 2/3): NotFoundError [HTTP 404]
+   🔌 Provider:   Model: 
+   🌐 Endpoint: https://api.anthropic.com
+   📝 Error: HTTP 404: Error code: 404
+   ⏱️  Elapsed: 3.70s  Context: 2 msgs, ~19,888 tokens
+⏳ Retrying in 5.7s (attempt 2/3)...
+⚠️  API call failed (attempt 3/3): NotFoundError [HTTP 404]
+   🔌 Provider:   Model: 
+   🌐 Endpoint: https://api.anthropic.com
+   📝 Error: HTTP 404: Error code: 404
+   ⏱️  Elapsed: 10.07s  Context: 2 msgs, ~19,888 tokens
+❌ API failed after 3 retries — HTTP 404: Error code: 404
+   💀 Final error: HTTP 404: Error code: 404
+🧾 Request debug dump written to: /Users/mohitmandawat/.hermes/sessions/request_dump_20260712_153239_6fec2d_20260712_153249_996789.json
+
+==================================================
+📋 CONVERSATION SUMMARY
+==================================================
+✅ Completed: False
+📞 API Calls: 1
+💬 Messages: 1
+
+🎯 FINAL RESPONSE:
+------------------------------
+API call failed after 3 retries: HTTP 404: Error code: 404
+
+👋 Agent execution completed!

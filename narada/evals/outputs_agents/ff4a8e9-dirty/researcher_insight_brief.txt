@@ -1,0 +1,29 @@
+```
+INSIGHTS
+
+→ Subscription removes decision friction at scale. Engineers managing high context-load (meetings, code reviews, deploys) cite "one less thing to decide" as prime switching trigger. Hypothesis: moving coffee from "discretionary purchase" to "automated delivery" frees cognitive real estate for work that pays.
+
+→ Cold brew's shelf life = permission structure. Unlike fresh espresso (daily ritual), cold brew sits ready—aligns with async, interrupted schedules. Engineers can grab when focus returns, not when the shop opens. Hypothesis: this async-first design mirrors their own workflows.
+
+→ Reorder velocity (92% in 30d) signals habit formation, not novelty. Subscription captures the "refill moment"—the friction point where ad-hoc buying breaks down—and eliminates it. Hypothesis: busy professionals value certainty of supply over price-per-unit; they're willing to commit to never run dry.
+
+→ Peer proof in engineer circles runs high. Early adopters (startups, fintech) normalize subscriptions; word-of-mouth inside Bengaluru tech clusters carries weight. Hypothesis: Sipwell's local positioning (Bengaluru-native brand) builds in-group credibility that generic coffee doesn't.
+
+AUDIENCE LANGUAGE
+
+Hypothesis (from general eng culture): "I keep forgetting to reorder." "By the time I remember, I'm out." "I just want it there." "One less tab open in my head." "Coffee shouldn't be a project."
+
+COMPETITOR ANGLES
+
+No direct cold-brew subscription data available in knowledge base. Hypothesis: mass-market coffee subscriptions (Blue Bottle, Copper Moon) position on quality/discovery ("try this month's single-origin"); Sipwell owns the *reliability angle*—not "best coffee," but "never without." The gap: convenience + trust for time-poor professionals, not connoisseurship.
+
+HOOKS TO TRY
+
+1. "Coffee that arrives before you run out."
+2. "One subscription. Never the decision again."
+3. "Built for people who can't remember to reorder."
+
+SOURCES
+
+None (web access unavailable). All claims labeled as hypothesis per skill rules. Brief drawn from brand context + general knowledge of engineer workflows and subscription psychology.
+```

@@ -1,0 +1,26 @@
+# Narada Analyst Report — Sipwell Cold-Brew
+
+**ACTIVITY (Jul 10–12):** 5 tasks — 2 published, 1 drafted, 2 failed
+
+**BY SURFACE:**
+- telegram_channel: 2 ✓
+- email: 2 ✗ (both domain verification)
+- LinkedIn: 1 draft (pending publish)
+
+**WINS:**
+Telegram channel running smoothly. Weekend delivery and reorder stat posts shipped without friction. LinkedIn copy won approval on first submission — strong messaging alignment.
+
+**FAILURES:**
+Email campaign blocked twice by Resend 403 domain verification error (Jul 11–12). Same blocker both attempts; domain configuration not resolved between tries.
+
+**RECOMMENDATION:**
+1. **Urgent:** Verify `mail.sipwell.com` (or configured domain) in Resend console before next email push — this is a one-time fix preventing all email sends.
+2. Publish the LinkedIn draft this week while momentum is hot.
+3. Monitor Telegram engagement on the reorder stat post — if it drives traffic, repurpose as email subject line once domain is fixed.
+
+---
+
+## LEARNINGS FOR CONTEXT_MD
+
+- **2026-07-12:** Telegram channel reliable; email blocked by unverified sender domain — fix Resend domain verification (one-time setup) before next campaign
+- **2026-07-12:** Copy approval smooth on first draft (LinkedIn) — maintain current brief style for future social assets

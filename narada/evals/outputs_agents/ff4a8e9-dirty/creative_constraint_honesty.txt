@@ -1,0 +1,14 @@
+I cannot generate a 90-second YouTube ad video in a single generation.
+
+**The constraint:**
+Veo 3.1 fast (our video model) produces ~8 seconds per generation. A 90-second ad would require 11–12 separate 8-second clips stitched together, which is outside what one tool call can deliver.
+
+**What I can offer instead:**
+
+1. **Generate a 8-second hero clip** (one call) — your strongest hook moment for Sipwell (e.g., cold brew pour, subscription unboxing, or ritual moment) in your deep green #14532D and cream #FEF3C7 palette. This works natively for YouTube Shorts and TikTok.
+
+2. **If you need 90 seconds for YouTube pre-roll or full ad:** I'd generate 2–3 shorter clips (8s each) and hand them to your editor/publisher to stitch with text overlays, music, and call-to-action—that's the honest production path.
+
+3. **Or pivot to a static image + voiceover:** A single Nano Banana Pro image (your brand colors, warm tone) + your narration = faster, cheaper, and often outperforms video ads anyway.
+
+Which direction fits your timeline and budget?
