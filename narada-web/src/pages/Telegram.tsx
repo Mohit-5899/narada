@@ -50,6 +50,22 @@ export default function Telegram() {
             The button links your Telegram account to this business — one tap.
           </p>
         )}
+        <div className="card" style={{ marginTop: "1rem", textAlign: "left" }}>
+          <p className="muted" style={{ marginBottom: "0.4rem" }}>
+            Button not working, or connecting from another device? Send this
+            command to <strong>@{TELEGRAM_BOT}</strong> yourself (click to
+            copy):
+          </p>
+          <code
+            style={{ cursor: "copy", userSelect: "all", display: "block" }}
+            title="Click to copy"
+            onClick={() =>
+              void navigator.clipboard.writeText(`/start ${business.link_token}`)
+            }
+          >
+            /start {business.link_token}
+          </code>
+        </div>
         <p>
           <a href="#/dashboard">Or watch the live dashboard →</a>
         </p>
