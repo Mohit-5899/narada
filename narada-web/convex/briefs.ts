@@ -40,6 +40,7 @@ export const update = mutation({
     competitors: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
     campaign_ideas: v.optional(v.array(v.string())),
+    context_md: v.optional(v.string()),
   },
   handler: async (ctx, { brief_id, ...fields }) => {
     await myBrief(ctx, brief_id);
