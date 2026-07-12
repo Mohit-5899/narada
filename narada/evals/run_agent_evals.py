@@ -308,10 +308,6 @@ def smoke() -> int:
     return 0
 
 
-if __name__ == "__main__":
-    sys.exit(main())
-
-
 # ---------------------------------------------------------------- langfuse
 def push_scores_to_langfuse(rows: list, label: str) -> None:
     """Push eval results into Langfuse as one trace + one score per case,
@@ -354,3 +350,7 @@ def push_scores_to_langfuse(rows: list, label: str) -> None:
     with urllib.request.urlopen(req, timeout=60) as resp:
         resp.read()
     print(f"langfuse: pushed {len(rows)} eval scores (trace 'narada-eval-run {label}')")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
