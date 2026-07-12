@@ -2,30 +2,44 @@ import { useState, type FormEvent } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import Header from "../components/Header";
 
+type Flow = "signUp" | "signIn";
+
 export default function SignIn() {
   const { signIn } = useAuthActions();
+  const [flow, setFlow] = useState<Flow>("signUp");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const sendLink = async (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const trimmed = email.trim();
-    if (!/^\S+@\S+\.\S+$/.test(trimmed)) {
+    const trimmedEmail = email.trim();
+    if (!/^\S+@\S+\.\S+$/.test(trimmedEmail)) {
       setError("Enter a valid email address.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
     setBusy(true);
     setError(null);
     try {
-      await signIn("resend", { email: trimmed });
-      setSent(true);
+      await signIn("password", {
+        email: trimmedEmail,
+        password,
+        flow,
+        ...(flow === "signUp" && name.trim() ? { name: name.trim() } : {}),
+      });
+      // Authenticated wrapper in App.tsx takes over from here.
     } catch {
       setError(
-        "Could not send the magic link. Is AUTH_RESEND_KEY set on the deployment? You can continue as guest below.",
+        flow === "signUp"
+          ? "Could not create the account. If you already have one, switch to Sign in."
+          : "Wrong email or password. New here? Switch to Create account.",
       );
-    } finally {
       setBusy(false);
     }
   };
@@ -41,40 +55,64 @@ export default function SignIn() {
     }
   };
 
+  const switchFlow = (next: Flow) => {
+    setFlow(next);
+    setError(null);
+  };
+
   return (
     <div className="page">
       <Header />
       <div className="card auth-card">
-        {sent ? (
-          <>
-            <h2>Check your email</h2>
-            <p>
-              We sent a magic link to <strong>{email}</strong>. Click it and
-              you'll land right back here, signed in.
-            </p>
-          </>
+        <h2>{flow === "signUp" ? "Create your Narada account" : "Welcome back"}</h2>
+        <p className="muted">
+          {flow === "signUp"
+            ? "Sign up once — your marketing team remembers you."
+            : "Sign in with your email and password."}
+        </p>
+        <form onSubmit={submit}>
+          {flow === "signUp" && (
+            <input
+              type="text"
+              placeholder="Your name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              autoComplete="name"
+            />
+          )}
+          <input
+            type="email"
+            placeholder="you@business.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            autoComplete="email"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password (8+ characters)"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            autoComplete={flow === "signUp" ? "new-password" : "current-password"}
+            required
+          />
+          <button className="btn-primary" type="submit" disabled={busy}>
+            {busy ? "Working…" : flow === "signUp" ? "Create account" : "Sign in"}
+          </button>
+        </form>
+        {flow === "signUp" ? (
+          <button className="btn-ghost" onClick={() => switchFlow("signIn")} disabled={busy}>
+            Already have an account? Sign in
+          </button>
         ) : (
-          <>
-            <h2>Sign in to Narada</h2>
-            <p className="muted">Magic link — no password, ever.</p>
-            <form onSubmit={sendLink}>
-              <input
-                type="email"
-                placeholder="you@business.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-              <button className="btn-primary" type="submit" disabled={busy}>
-                {busy ? "Sending…" : "Send magic link"}
-              </button>
-            </form>
-            <button className="btn-ghost" onClick={() => void guest()} disabled={busy}>
-              Continue as guest (demo)
-            </button>
-            {error && <p className="error">{error}</p>}
-          </>
+          <button className="btn-ghost" onClick={() => switchFlow("signUp")} disabled={busy}>
+            New to Narada? Create account
+          </button>
         )}
+        <button className="btn-ghost" onClick={() => void guest()} disabled={busy}>
+          Continue as guest (demo)
+        </button>
+        {error && <p className="error">{error}</p>}
       </div>
     </div>
   );

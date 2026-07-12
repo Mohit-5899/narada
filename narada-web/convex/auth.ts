@@ -1,13 +1,20 @@
 import { convexAuth } from "@convex-dev/auth/server";
-import Resend from "@auth/core/providers/resend";
+import { Password } from "@convex-dev/auth/providers/Password";
 import { Anonymous } from "@convex-dev/auth/providers/Anonymous";
 
-// Magic-link signup via Resend (D8: email magic-link, no password).
-// Anonymous is a demo fallback so the flow works before AUTH_RESEND_KEY is set.
+// Classic email + password auth (supersedes D8 magic link — decision log
+// 2026-07-12): sign up once with name/email/password, sign in with the same
+// credentials forever after. Anonymous stays as the judge-friendly demo path.
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
-    Resend({
-      from: process.env.AUTH_EMAIL_FROM ?? "Narada <onboarding@resend.dev>",
+    Password({
+      profile(params) {
+        const name = typeof params.name === "string" && params.name ? params.name : null;
+        return {
+          email: params.email as string,
+          ...(name ? { name } : {}),
+        };
+      },
     }),
     Anonymous,
   ],
