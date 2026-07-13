@@ -1,0 +1,46 @@
+```
+INSIGHTS
+
+• Decision fatigue → subscription removes daily "where/what to buy" friction. 
+  Engineers optimize for time; recurring delivery is a sunk-decision. This 
+  explains the 92% reorder rate (habit + zero friction beats price). 
+  [Hypothesis: engineers resent context-switching; subscriptions collapse 
+  cognitive load.]
+
+• Social proof within peer group matters more than general testimonials. 
+  Software teams often share tools/routines; if subscription becomes "what 
+  people at my level use," adoption accelerates. Sipwell should map who 
+  influences engineer buying inside companies.
+
+• "Always on" work culture creates permission to spend on convenience. 
+  Subscription positions cold brew as non-negotiable infrastructure (like 
+  AWS), not luxury—this reframe is a lever.
+
+• Bulk subscription (multi-month or team plans) likely converts higher 
+  because it removes per-transaction guilt + creates accountability loop 
+  (sunk cost drives reorders).
+
+AUDIENCE LANGUAGE
+
+[Hypothesis based on engineer psychology, no direct source:]
+"I just want it there" | "one less thing to think about" | "it's faster 
+than coffee shop lines" | "tastes consistent" | "I forget to order, so 
+subscription saves me"
+
+COMPETITOR ANGLES
+
+No named competitors researched (web access unavailable). Hypothesis: mass 
+subscription services (Blue Bottle, Dripkit) position on *taste/premium*; 
+Sipwell's gap is *speed + reliability for high-output professionals*. 
+Competitors don't speak to "decision removal" or team/office culture angle.
+
+HOOKS TO TRY
+
+1. "Cold brew that lands before you need it—one less decision."
+2. "Built for people who'd rather optimize code than coffee runs."
+3. "92% reorder. Engineers don't do that unless it solves something."
+
+SOURCES
+
+None—web access unavailable. All findings labeled as hypothesis per brief rules.
+```

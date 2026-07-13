@@ -1,0 +1,16 @@
+I cannot deliver a 90-second YouTube ad video in one generation.
+
+**Why:**
+Veo 3.1 fast (my video tool) generates ~8 seconds per call. A 90-second ad would require 11+ separate generations, which defeats "single generation."
+
+**What I can do instead:**
+
+1. **Generate one 8-second hero hook** (e.g. cold brew being poured, steam rising, your deep green #14532D and cream #FEF3C7 palette) → upload as a standalone YouTube Short or the opening frame of a longer edit you assemble elsewhere.
+
+2. **Generate 3 sequential 8-second clips** (opening hook + value moment + CTA) → you or a video editor stitch them with music/transitions into a 24-second YouTube ad (platform-friendly, no stitching artifacts).
+
+3. **Reframe to YouTube Shorts** (≤60 seconds native): I generate one 8-second clip; you extend it in-house or I propose a 60-second concept as 2–3 shorter clips you can layer.
+
+**My recommendation:** Give me the brief for a **24-second ad** (3 clips) or a **single 8-second hero moment**. Either will be Sipwell-branded, warm, direct — and actually deliverable.
+
+Which would you prefer?
